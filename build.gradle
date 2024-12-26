@@ -1,0 +1,70 @@
+buildscript {
+//    ext.kotlin_version = '1.9.0'
+    repositories {
+        repositories {
+            maven { url 'https://maven.aliyun.com/repository/public' }
+            maven { url 'https://maven.aliyun.com/repository/jcenter' }
+
+            maven { url 'https://maven.aliyun.com/repository/google' }
+            maven { url "https://jitpack.io" }
+            maven {
+                allowInsecureProtocol = true
+                url 'http://maven.aliyun.com/nexus/content/groups/public/'
+            }
+            maven {
+                allowInsecureProtocol = true
+                url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+            }
+            maven {
+                allowInsecureProtocol = true
+                url 'http://maven.aliyun.com/nexus/content/repositories/google'
+            }
+            maven {
+                allowInsecureProtocol = true
+                url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin'
+            }
+            mavenCentral()
+
+            maven { url 'https://maven.google.com' }
+
+        }
+        dependencies {
+            classpath "com.android.tools.build:gradle:8.0.0"
+//            classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        }
+    }
+}
+allprojects {
+    repositories {
+        maven { url 'https://maven.aliyun.com/repository/jcenter' }
+
+        maven { url 'https://maven.aliyun.com/repository/public' }
+
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url "https://jitpack.io" }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/jcenter'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/google'
+        }
+        maven {
+            allowInsecureProtocol = true
+            url 'http://maven.aliyun.com/nexus/content/repositories/gradle-plugin'
+        }
+        mavenCentral()
+
+        maven { url 'https://maven.google.com' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
