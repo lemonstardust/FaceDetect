@@ -1,17 +1,20 @@
+package com.example.facedetect
 
-package com.example.facedetect;
+import android.content.res.AssetManager
+import android.view.Surface
 
-import android.content.res.AssetManager;
-import android.view.Surface;
+class SCRFDNcnn {
+    external fun loadModel(mgr: AssetManager?, modelid: Int, cpugpu: Int): Boolean
 
-public class SCRFDNcnn
-{
-    public native boolean loadModel(AssetManager mgr, int modelid, int cpugpu);
-    public native boolean openCamera(int facing);
-    public native boolean closeCamera();
-    public native boolean setOutputWindow(Surface surface);
+    external fun openCamera(facing: Int): Boolean
 
-    static {
-        System.loadLibrary("scrfdncnn");
+    external fun closeCamera(): Boolean
+
+    external fun setOutputWindow(surface: Surface?): Boolean
+
+    companion object {
+        init {
+            System.loadLibrary("scrfdncnn")
+        }
     }
 }
