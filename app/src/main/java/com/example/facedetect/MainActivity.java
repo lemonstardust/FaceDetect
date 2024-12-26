@@ -27,9 +27,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
     private int facing = 0;
 
     private Spinner spinnerModel;
-    private Spinner spinnerCPUGPU;
     private int current_model = 0;
-    private int current_cpugpu = 0;
 
     private SurfaceView cameraView;
 
@@ -80,30 +78,14 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback
             }
         });
 
-        spinnerCPUGPU = (Spinner) findViewById(R.id.spinnerCPUGPU);
-        spinnerCPUGPU.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id)
-            {
-                if (position != current_cpugpu)
-                {
-                    current_cpugpu = position;
-                    reload();
-                }
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> arg0)
-            {
-            }
-        });
 
         reload();
     }
 
     private void reload()
     {
-        boolean ret_init = scrfdncnn.loadModel(getAssets(), current_model, current_cpugpu);
+        boolean ret_init = scrfdncnn.loadModel(getAssets(), current_model, 0);
         if (!ret_init)
         {
             Log.e("MainActivity", "scrfdncnn loadModel failed");

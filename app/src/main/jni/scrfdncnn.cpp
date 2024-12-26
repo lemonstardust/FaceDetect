@@ -160,7 +160,7 @@ JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
 // public native boolean loadModel(AssetManager mgr, int modelid, int cpugpu);
 JNIEXPORT jboolean JNICALL Java_com_example_facedetect_SCRFDNcnn_loadModel(JNIEnv* env, jobject thiz, jobject assetManager, jint modelid, jint cpugpu)
 {
-    if (modelid < 0 || modelid > 7 || cpugpu < 0 || cpugpu > 1)
+    if (modelid < 0 || modelid > 2 || cpugpu < 0 || cpugpu > 1)
     {
         return JNI_FALSE;
     }
@@ -172,34 +172,19 @@ JNIEXPORT jboolean JNICALL Java_com_example_facedetect_SCRFDNcnn_loadModel(JNIEn
     const char* modeltypes[] =
     {
         "500m",
-        "500m_kps",
-        "1g",
-        "2.5g",
-        "2.5g_kps",
-        "10g",
-        "10g_kps",
-        "34g"
+        "500m_kps"
     };
 
     const char* modeltype = modeltypes[(int)modelid];
-    bool use_gpu = (int)cpugpu == 1;
 
     // reload
     {
         ncnn::MutexLockGuard g(lock);
 
-        if (use_gpu )
-        {
-            // no gpu
-            delete g_scrfd;
-            g_scrfd = 0;
-        }
-        else
-        {
             if (!g_scrfd)
                 g_scrfd = new SCRFD;
-            g_scrfd->load(mgr, modeltype, use_gpu);
-        }
+            g_scrfd->load(mgr, modeltype, 0);
+
     }
 
     return JNI_TRUE;
