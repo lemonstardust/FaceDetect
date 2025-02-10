@@ -17,6 +17,9 @@
 #include <string.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <fstream>
+#include <opencv2/opencv.hpp>
 
 #include "cpu.h"
 
@@ -142,6 +145,8 @@ static ncnn::Mat generate_anchors(int base_size, const ncnn::Mat& ratios, const 
 
     return anchors;
 }
+
+
 
 static void generate_proposals(const ncnn::Mat& anchors, int feat_stride, const ncnn::Mat& score_blob, const ncnn::Mat& bbox_blob, const ncnn::Mat& kps_blob, float prob_threshold, std::vector<FaceObject>& faceobjects)
 {
@@ -407,6 +412,25 @@ int SCRFD::detect(const cv::Mat& rgb, std::vector<FaceObject>& faceobjects, floa
     {
         faceobjects[i] = faceproposals[picked[i]];
 
+
+        // 调整矩形为正方形
+        float rectWidth = faceobjects[i].rect.width;
+        float rectHeight = faceobjects[i].rect.height;
+        float maxSize = std::max(rectWidth,rectHeight);
+
+        // 计算原始矩形的中心点
+        float centerX = faceobjects[i].rect.x + rectWidth / 2;
+        float centerY = faceobjects[i].rect.y + rectHeight / 2;
+
+        // 设置宽度和高度为最大值
+        faceobjects[i].rect.width = maxSize;
+        faceobjects[i].rect.height = maxSize;
+
+        // 重新计算矩形的位置，使人脸处于中心
+        faceobjects[i].rect.x = centerX - maxSize / 2;
+        faceobjects[i].rect.y = centerY - maxSize / 2;
+
+
         // adjust offset to original unpadded
         float x0 = (faceobjects[i].rect.x - (wpad / 2)) / scale;
         float y0 = (faceobjects[i].rect.y - (hpad / 2)) / scale;
@@ -457,6 +481,10 @@ int SCRFD::draw(cv::Mat& rgb, const std::vector<FaceObject>& faceobjects)
     for (size_t i = 0; i < faceobjects.size(); i++)
     {
         const FaceObject& obj = faceobjects[i];
+        __android_log_print(ANDROID_LOG_DEBUG, "ncnn",  "%.5f at %.2f %.2f %.2f x %.2f\n", obj.prob,
+                 obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
+
+
 
 //         fprintf(stderr, "%.5f at %.2f %.2f %.2f x %.2f\n", obj.prob,
 //                 obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
@@ -491,4 +519,35 @@ int SCRFD::draw(cv::Mat& rgb, const std::vector<FaceObject>& faceobjects)
     }
 
     return 0;
+}
+
+ void SCRFD::save_face_objects(const cv::Mat& rgb, const std::vector<FaceObject>& faceobjects, const std::string& output_dir) {
+    for (size_t i = 0; i < faceobjects.size(); i++) {
+        const FaceObject& obj = faceobjects[i];
+        cv::Rect roi(obj.rect.x, obj.rect.y, obj.rect.width, obj.rect.height);
+        cv::Mat face = rgb(roi);
+
+        // 确保矩形区域在图像边界内
+//        if (!face.empty()) {
+//            std::string filename = output_dir + "/face_" + std::to_string(i) + ".png";
+//            cv::imwrite(filename, face);
+//        }
+
+
+        // 将人脸图像编码为 PNG 格式
+//        std::vector<uchar> buffer;
+//        cv::imencode(".png", face, buffer);
+//
+//        // 这里可以将 buffer 保存到文件或其他存储介质
+//        // 例如，使用文件流保存到文件
+//        std::string filename = output_dir + "/face_" + std::to_string(i) + ".png";
+//        std::ofstream file(filename, std::ios::out | std::ios::binary);
+//        if (file.is_open()) {
+//            file.write(reinterpret_cast<const char*>(buffer.data()), buffer.size());
+//            file.close();
+//        } else {
+//            // 处理文件打开失败的情况
+////            std::cerr << "Failed to open file for writing: " << filename << std::endl;
+//        }
+    }
 }

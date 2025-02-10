@@ -13,6 +13,7 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.File
 
 
 class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
@@ -70,7 +71,12 @@ class MainActivity : AppCompatActivity(), SurfaceHolder.Callback {
     }
 
     private fun reload() {
-        val ret_init = scrfdncnn.loadModel(assets, current_model, 0)
+        val dir = getExternalFilesDir(null)?.absolutePath + "/test"
+        val file = File(dir)
+        if (!file.exists()) {
+            file.mkdirs()
+        }
+        val ret_init = scrfdncnn.loadModel(assets, current_model, 0, dir)
         if (!ret_init) {
             Log.e("MainActivity", "scrfdncnn loadModel failed")
         }

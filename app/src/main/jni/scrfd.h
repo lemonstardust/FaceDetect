@@ -37,6 +37,9 @@ public:
 
     int draw(cv::Mat& rgb, const std::vector<FaceObject>& faceobjects);
 
+    void save_face_objects(const cv::Mat &rgb, const std::vector<FaceObject> &faceobjects,
+                           const std::string &output_dir);
+
 private:
     ncnn::Net scrfd;
     bool has_kps;

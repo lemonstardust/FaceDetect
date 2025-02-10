@@ -23,6 +23,8 @@
 
 #if __ARM_NEON
 #include <arm_neon.h>
+#include <opencv2/highgui/highgui.hpp>
+
 #endif // __ARM_NEON
 
 static int draw_unsupported(cv::Mat& rgb)
@@ -105,6 +107,7 @@ class MyNdkCamera : public NdkCameraWindow
 {
 public:
     virtual void on_image_render(cv::Mat& rgb) const;
+    std::string outputDir; // 添加成员变量
 };
 
 void MyNdkCamera::on_image_render(cv::Mat& rgb) const
@@ -119,6 +122,7 @@ void MyNdkCamera::on_image_render(cv::Mat& rgb) const
             g_scrfd->detect(rgb, faceobjects);
 
             g_scrfd->draw(rgb, faceobjects);
+            g_scrfd->save_face_objects(rgb, faceobjects, this->outputDir); // 使用成员变量
         }
         else
         {
@@ -158,8 +162,21 @@ JNIEXPORT void JNI_OnUnload(JavaVM* vm, void* reserved)
 }
 
 // public native boolean loadModel(AssetManager mgr, int modelid, int cpugpu);
-JNIEXPORT jboolean JNICALL Java_com_example_facedetect_SCRFDNcnn_loadModel(JNIEnv* env, jobject thiz, jobject assetManager, jint modelid, jint cpugpu)
+JNIEXPORT jboolean JNICALL Java_com_example_facedetect_SCRFDNcnn_loadModel(JNIEnv* env, jobject thiz, jobject assetManager, jint modelid, jint cpugpu, jstring dir)
 {
+    // 将 jstring 转换为 const char*
+    const char* dirStr = env->GetStringUTFChars(dir, nullptr);
+    if (dirStr == nullptr) {
+        return JNI_FALSE; // 如果转换失败，返回 false
+    }
+
+    if (g_camera) {
+        g_camera->outputDir = std::string(dirStr);
+    }
+
+    // 释放 jstring 资源
+    env->ReleaseStringUTFChars(dir, dirStr);
+
     if (modelid < 0 || modelid > 2 || cpugpu < 0 || cpugpu > 1)
     {
         return JNI_FALSE;

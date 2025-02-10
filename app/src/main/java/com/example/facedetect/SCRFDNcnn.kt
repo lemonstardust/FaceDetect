@@ -4,7 +4,7 @@ import android.content.res.AssetManager
 import android.view.Surface
 
 class SCRFDNcnn {
-    external fun loadModel(mgr: AssetManager?, modelid: Int, cpugpu: Int): Boolean
+    external fun loadModel(mgr: AssetManager?, modelid: Int, cpugpu: Int,dir:String): Boolean
 
     external fun openCamera(facing: Int): Boolean
 
