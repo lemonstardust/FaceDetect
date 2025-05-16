@@ -3,11 +3,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt' // kapt 插件
 
 android {
-    namespace 'com.example.facedetect'
+    namespace 'com.example.yolofacedetect'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.facedetect"
+        applicationId "com.example.yolofacedetect"
         archivesBaseName = "$applicationId"
 
         minSdk 30
@@ -16,6 +16,9 @@ android {
         ndk {
             abiFilters 'arm64-v8a', 'armeabi-v7a'
         }
+
+        versionCode 10001
+        versionName "1.0.1"
     }
 
 
